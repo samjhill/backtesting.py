@@ -18,7 +18,7 @@ Backtest trading strategies with Python.
 Installation
 ------------
 
-    $ pip install backtesting
+    $ pip3 install git+https://github.com/samjhill/backtesting.py
 
 
 Usage
