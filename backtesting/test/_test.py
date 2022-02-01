@@ -194,9 +194,19 @@ class TestBacktest(TestCase):
         self.assertEqual(stats['# Trades'], 144)
 
     def test_broker_params(self):
-        bt = Backtest(GOOG.iloc[:100], SmaCross,
+        bt = Backtest(GOOG, SmaCross,
                       cash=1000, commission=.01, margin=.1, trade_on_close=True)
-        bt.run()
+        stats = bt.run()
+        num_trades = stats[12]
+        assert num_trades == 3
+    
+    def test_broker_should_dca(self):
+        bt = Backtest(GOOG, SmaCross,
+                      cash=1000, commission=.01, margin=.1, trade_on_close=True, should_dca=True)
+        stats = bt.run()
+        num_trades = stats[12]
+        assert num_trades == 65
+
 
     def test_dont_overwrite_data(self):
         df = EURUSD.copy()
