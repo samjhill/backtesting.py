@@ -439,7 +439,7 @@ class _Broker:
             self.exit_price = np.tile(np.nan, length)
             self.pl = np.tile(np.nan, length)
 
-    def __init__(self, *, data, cash, commission, margin, trade_on_close, length, should_dca):
+    def __init__(self, *, data, cash, commission, margin, trade_on_close, length, should_dca, dca_amount):
         assert 0 < cash, "cash should be >0, is {}".format(cash)
         assert 0 <= commission < .1, "commission should be between 0-10%, is {}".format(commission)
         assert 0 < margin <= 1, "margin should be between 0 and 1, is {}".format(margin)
@@ -449,6 +449,7 @@ class _Broker:
         self._leverage = 1 / margin
         self._trade_on_close = trade_on_close
         self._should_dca = should_dca
+        self._dca_amount = dca_amount
         self._position = 0
         self._position_open_price = 0
         self._position_open_i = None
@@ -492,7 +493,7 @@ class _Broker:
         self.orders.set_entry(None)
 
         i, price = self._get_market_price(price)
-        cash_for_trade = self._cash if self._should_dca is False else self._cash / 100
+        cash_for_trade = self._cash if self._should_dca is False else self._dca_amount
         position = float(cash_for_trade * self._leverage / (price * (1 + self._commission)))
         self._position = position if is_long else -position
         self._position_open_price = price
@@ -588,7 +589,8 @@ class Backtest:
                  commission: float = .0,
                  margin: float = 1.,
                  trade_on_close=False,
-                 should_dca=False
+                 should_dca=False,
+                 dca_amount: int = 25
                  ):
         """
         Initialize a backtest. Requires data and a strategy to test.
@@ -624,6 +626,8 @@ class Backtest:
         next bar's open.
 
         If `should_dca` is `True`, the entire `cash` amount will not be used for each buy. Instead, it will split buys into pieces.
+
+        `dca_amount` is the amount of cash, in whole dollars, to allot per trade.
         """
 
         if not (isinstance(strategy, type) and issubclass(strategy, Strategy)):
@@ -666,7 +670,7 @@ class Backtest:
         self._data = data   # type: pd.DataFrame
         self._broker = partial(
             _Broker, cash=cash, commission=commission, margin=margin,
-            trade_on_close=trade_on_close, length=len(data), should_dca=should_dca
+            trade_on_close=trade_on_close, length=len(data), should_dca=should_dca, dca_amount=dca_amount
         )
         self._strategy = strategy
         self._results = None
