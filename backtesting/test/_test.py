@@ -202,7 +202,7 @@ class TestBacktest(TestCase):
     
     def test_broker_should_dca(self):
         bt = Backtest(GOOG, SmaCross,
-                      cash=1000, commission=.01, margin=.1, trade_on_close=True, should_dca=True, dca_amount=25)
+                      cash=1000, commission=.01, margin=.1, trade_on_close=True, should_dca=True)
         stats = bt.run()
         num_trades = stats[12]
         assert num_trades == 65
