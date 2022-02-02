@@ -24,7 +24,7 @@ from backtesting.lib import (
     resample_apply,
     plot_heatmaps
 )
-from backtesting.test import GOOG, EURUSD, SMA
+from backtesting.test import BTCUSD, GOOG, EURUSD, SMA
 from backtesting._util import _Indicator, _as_str, _Array
 
 
@@ -207,6 +207,12 @@ class TestBacktest(TestCase):
         num_trades = stats[12]
         assert num_trades == 65
 
+    def test_broker_bitcoin_should_dca(self):
+        bt = Backtest(BTCUSD, SmaCross,
+                      cash=1000, commission=.01, margin=.1, trade_on_close=True, should_dca=True, dca_amount=50)
+        stats = bt.run()
+        num_trades = stats[12]
+        assert num_trades == 379
 
     def test_dont_overwrite_data(self):
         df = EURUSD.copy()
