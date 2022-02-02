@@ -1,7 +1,7 @@
 appdirs==1.4.4
 asgiref==3.5.0
 attrs==21.4.0
-Backtesting @ git+https://github.com/samjhill/backtesting.py@90eff7f7fab3104085561edeeccafcb1303299b8
+Backtesting @ git+https://github.com/samjhill/backtesting.py@f45ba0670f98f71f82d1e1a2944ddcccbadd41bd
 bip32utils==0.3.post4
 black==21.6b0
 bokeh==1.3.4
@@ -46,9 +46,9 @@ meshio==4.4.6
 mnemonic==0.20
 msgpack==1.0.2
 mypy-extensions==0.4.3
-numpy==1.21.1
+numpy==1.21.5
 packaging==20.9
-pandas==0.24.2
+pandas==1.3.5
 pastel==0.2.1
 pathspec==0.8.1
 pexpect==4.8.0
