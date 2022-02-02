@@ -16,6 +16,7 @@ from backtesting import Backtest, Strategy
 from backtesting.lib import (
     OHLCV_AGG,
     barssince,
+    is_less_than,
     cross,
     crossover,
     quantile,
@@ -521,6 +522,11 @@ class TestLib(TestCase):
         self.assertTrue(cross([0, 1], [1, 0]))
         self.assertTrue(cross([1, 0], [0, 1]))
         self.assertFalse(cross([1, 0], [1, 0]))
+
+    def test_is_less_than(self):
+        self.assertTrue(is_less_than([0, 1], [1, 0]))
+        self.assertTrue(is_less_than([0, 0], [1, 1]))
+        self.assertFalse(is_less_than([1, 0], [1, 0]))
 
     def test_crossover(self):
         self.assertTrue(crossover([0, 1], [1, 0]))

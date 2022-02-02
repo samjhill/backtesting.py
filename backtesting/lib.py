@@ -62,6 +62,28 @@ def cross(series1, series2) -> bool:
     return crossover(series1, series2) or crossover(series2, series1)
 
 
+def is_less_than(series1, series2) -> bool:
+    """
+    Return `True` if `series1` is less than `series2`.
+
+        >>> is_less_than(self.data.Close, self.sma)
+        True
+
+    """
+    series1 = (
+        series1.values if isinstance(series1, pd.Series) else
+        (series1, series1) if isinstance(series1, Number) else
+        series1)
+    series2 = (
+        series2.values if isinstance(series2, pd.Series) else
+        (series2, series2) if isinstance(series2, Number) else
+        series2)
+    try:
+        return series1[-2] < series2[-2]
+    except IndexError:
+        return False
+
+
 def crossover(series1, series2) -> bool:
     """
     Return `True` if `series1` just crossed over
