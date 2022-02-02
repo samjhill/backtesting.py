@@ -28,7 +28,7 @@ except ImportError:
         return seq
 
 from ._plotting import plot
-from ._util import _as_str, _Indicator, _Data, _data_period
+from ._util import _as_str, _Indicator, _Data, _data_period, _get_dca_equity
 
 
 __pdoc__ = {
@@ -885,6 +885,7 @@ class Backtest:
         def _round_timedelta(value, _period=_data_period(df)):
             return value.ceil(_period.resolution) if isinstance(value, pd.Timedelta) else value
 
+
         s = pd.Series()
         s['Start'] = df.index[0]
         s['End'] = df.index[-1]
@@ -901,6 +902,7 @@ class Backtest:
         s['Return [%]'] = (equity[-1] - equity[0]) / equity[0] * 100
         c = data.Close.values
         s['Buy & Hold Return [%]'] = abs(c[-1] - c[0]) / c[0] * 100  # long OR short
+        s['Dollar-Cost-Average Return [%]'] = (_get_dca_equity(equity[0], c) - equity[0]) / equity[0] * 100
         s['Max. Drawdown [%]'] = max_dd = -np.nan_to_num(dd.max()) * 100
         s['Avg. Drawdown [%]'] = -dd_peaks.mean() * 100
         s['Max. Drawdown Duration'] = 0

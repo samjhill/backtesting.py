@@ -29,6 +29,30 @@ def _data_period(df):
     return df.index[:100].to_series(keep_tz=True).diff().median()
 
 
+def _get_dca_purchases(totalCash, prices):
+    dca_amount = totalCash / len(prices)
+    purchases = []
+
+    for price in prices:
+        share_quantity = (1 / price) * dca_amount 
+        purchases.append({
+            "price": price,
+            "share_quantity": share_quantity
+        })
+
+    return purchases
+
+
+def _get_dca_equity(totalCash, prices):
+    purchases = _get_dca_purchases(totalCash, prices)
+    final_price = purchases[-1]["price"]
+    total_shares = 0
+
+    for purchase in purchases:
+        total_shares += purchase["share_quantity"]
+
+    return final_price * total_shares
+
 class _Array(np.ndarray):
     """
     ndarray extended to supply .name and other arbitrary properties
