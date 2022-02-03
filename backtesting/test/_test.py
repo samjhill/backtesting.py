@@ -216,8 +216,8 @@ class TestBacktest(TestCase):
             dca_amount=25,
         )
         stats = bt.run()
-        num_trades = stats[12]
-        assert num_trades == 65
+        num_trades = stats[13]
+        assert num_trades == 57
 
     def test_broker_bitcoin_should_dca(self):
         bt = Backtest(
@@ -231,8 +231,8 @@ class TestBacktest(TestCase):
             dca_amount=50,
         )
         stats = bt.run()
-        num_trades = stats[12]
-        assert num_trades == 379
+        num_trades = stats[13]
+        assert num_trades == 18
 
     def test_dont_overwrite_data(self):
         df = EURUSD.copy()
@@ -266,14 +266,14 @@ class TestBacktest(TestCase):
                 {
                     # NOTE: These values are also used on the website!
                     "# Trades": 65,
-                    "Avg. Drawdown Duration": pd.Timedelta("33 days 00:00:00"),
+                    "Avg. Drawdown Duration": pd.Timedelta("32 days 13:31:16.056338028"),
                     "Avg. Drawdown [%]": -5.494714447812327,
-                    "Avg. Trade Duration": pd.Timedelta("46 days 00:00:00"),
+                    "Avg. Trade Duration": pd.Timedelta("45 days 00:44:18.461538461"),
                     "Avg. Trade [%]": 3.0404430275631444,
                     "Best Trade [%]": 54.05363186670138,
                     "Buy & Hold Return [%]": 703.4582419772772,
-                    "Dollar-Cost-Average Return [%]": 97.37947110853551,
                     "Calmar Ratio": 0.0631443286380662,
+                    "Dollar-Cost-Average Return [%]": 97.37947110853551,
                     "Duration": pd.Timedelta("3116 days 00:00:00"),
                     "End": pd.Timestamp("2013-03-01 00:00:00"),
                     "Equity Final [$]": 52624.29346696951,

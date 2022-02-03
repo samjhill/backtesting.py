@@ -493,7 +493,16 @@ class _Broker:
         self.orders.set_entry(None)
 
         i, price = self._get_market_price(price)
-        cash_for_trade = self._cash if self._should_dca is False else self._dca_amount
+
+        if self._should_dca:
+            cash_for_trade = self._dca_amount
+            if self._cash < cash_for_trade:
+                print("Sorry, there is not enough cash left to make any more purchases.")
+                return
+            self._cash -= cash_for_trade
+        else:
+            cash_for_trade = self._cash
+
         position = float(cash_for_trade * self._leverage / (price * (1 + self._commission)))
         self._position = position if is_long else -position
         self._position_open_price = price
@@ -903,6 +912,7 @@ class Backtest:
         c = data.Close.values
         s['Buy & Hold Return [%]'] = abs(c[-1] - c[0]) / c[0] * 100  # long OR short
         s['Dollar-Cost-Average Return [%]'] = (_get_dca_equity(equity[0], c) - equity[0]) / equity[0] * 100
+        # todo: number of shares
         s['Max. Drawdown [%]'] = max_dd = -np.nan_to_num(dd.max()) * 100
         s['Avg. Drawdown [%]'] = -dd_peaks.mean() * 100
         s['Max. Drawdown Duration'] = 0
