@@ -201,7 +201,7 @@ class TestBacktest(TestCase):
             GOOG, SmaCross, cash=1000, commission=0.01, margin=0.1, trade_on_close=True
         )
         stats = bt.run()
-        num_trades = stats[12]
+        num_trades = stats[15]
         assert num_trades == 3
 
     def test_broker_should_dca(self):
@@ -216,7 +216,7 @@ class TestBacktest(TestCase):
             dca_amount=25,
         )
         stats = bt.run()
-        num_trades = stats[13]
+        num_trades = stats[15]
         assert num_trades == 57
 
     def test_broker_bitcoin_should_dca(self):
@@ -231,7 +231,7 @@ class TestBacktest(TestCase):
             dca_amount=50,
         )
         stats = bt.run()
-        num_trades = stats[13]
+        num_trades = stats[15]
         assert num_trades == 18
 
     def test_dont_overwrite_data(self):

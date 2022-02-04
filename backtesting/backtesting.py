@@ -445,6 +445,7 @@ class _Broker:
         assert 0 < margin <= 1, "margin should be between 0 and 1, is {}".format(margin)
         self._data = data  # type: _Data
         self._cash = cash
+        self._starting_cash = cash
         self._commission = commission
         self._leverage = 1 / margin
         self._trade_on_close = trade_on_close
@@ -456,6 +457,7 @@ class _Broker:
         self.log = self._Log(length)
         self.position = Position(self)
         self.orders = Orders(self)
+        self._number_of_shares = 0
 
     def __repr__(self):
         return '<Broker: {:.0f}{:+.1f}>'.format(self._cash, self.position.pl)
@@ -500,6 +502,8 @@ class _Broker:
                 print("Sorry, there is not enough cash left to make any more purchases.")
                 return
             self._cash -= cash_for_trade
+            share_quantity = (1 / price) * self._dca_amount 
+            self._number_of_shares += 1 / share_quantity
         else:
             cash_for_trade = self._cash
 
@@ -910,9 +914,12 @@ class Backtest:
         s['Equity Peak [$]'] = equity.max()
         s['Return [%]'] = (equity[-1] - equity[0]) / equity[0] * 100
         c = data.Close.values
+        last_price = c[-1]
         s['Buy & Hold Return [%]'] = abs(c[-1] - c[0]) / c[0] * 100  # long OR short
         s['Dollar-Cost-Average Return [%]'] = (_get_dca_equity(equity[0], c) - equity[0]) / equity[0] * 100
         # todo: number of shares
+        s['Number of shares'] = broker._number_of_shares
+        s['Total share value gain by end of run [%]'] = ((broker._number_of_shares * last_price) / broker._starting_cash) * 100
         s['Max. Drawdown [%]'] = max_dd = -np.nan_to_num(dd.max()) * 100
         s['Avg. Drawdown [%]'] = -dd_peaks.mean() * 100
         s['Max. Drawdown Duration'] = 0
