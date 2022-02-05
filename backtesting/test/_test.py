@@ -423,7 +423,7 @@ class TestPlot(TestCase):
                 show_legend=False,
             ).items():
                 with self.subTest(param=p[0]):
-                    bt.plot(**dict([p]), filename=f, open_browser=False)
+                    bt.plot(**dict([p]), filename=f, open_browser=True)
 
     def test_resolutions(self):
         with _tempfile() as f:

@@ -22,7 +22,12 @@ from bokeh.models import (
     FuncTickFormatter,
     WheelZoomTool,
     LinearColorMapper,
+    ColumnDataSource,
 )
+from bokeh.core.properties import (
+    Seq,
+)
+from bokeh.models.widgets import DataTable, DateFormatter, TableColumn
 from bokeh.io import output_notebook, output_file, show
 from bokeh.io.state import curstate
 from bokeh.layouts import gridplot
@@ -496,8 +501,32 @@ return this.labels[index] || "";
 
                 figs_below_ohlc.append(fig)
 
+    def _plot_results_table(results):
+        results_as_dict = results.to_dict()
+        # table errors out when trying to JSON-serialize the strategy class
+        del results_as_dict["_strategy"]
+        
+        columns = [
+            TableColumn(field="name", title="name"),
+            TableColumn(field="value", title="value"),
+        ]
+
+        names = list(results_as_dict.keys())
+        values = list(results_as_dict.values())
+        
+        source = ColumnDataSource({
+            "name": names,
+            "value": values
+        })
+
+        data_table = DataTable(source=source, columns=columns, width=400, height=280)
+
+        return data_table
+
     # Construct figure ...
 
+    figs_above_ohlc.append(_plot_results_table(results))
+    
     if plot_equity:
         _plot_equity_section()
 
@@ -533,7 +562,7 @@ return this.labels[index] || "";
 
     plots = figs_above_ohlc + [fig_ohlc] + figs_below_ohlc
     for f in plots:
-        if f.legend:
+        if hasattr(f, 'legend'):
             f.legend.location = 'top_left' if show_legend else None
             f.legend.border_line_width = 1
             f.legend.border_line_color = '#333333'
@@ -541,14 +570,14 @@ return this.labels[index] || "";
             f.legend.spacing = 0
             f.legend.margin = 0
             f.legend.label_text_font_size = '8pt'
-        f.min_border_left = 0
-        f.min_border_top = 3
-        f.min_border_bottom = 6
-        f.min_border_right = 10
-        f.outline_line_color = '#666666'
+            f.min_border_left = 0
+            f.min_border_top = 3
+            f.min_border_bottom = 6
+            f.min_border_right = 10
+            f.outline_line_color = '#666666'
 
-        wheelzoom_tool = next(wz for wz in f.tools if isinstance(wz, WheelZoomTool))
-        wheelzoom_tool.maintain_focus = False
+            wheelzoom_tool = next(wz for wz in f.tools if isinstance(wz, WheelZoomTool))
+            wheelzoom_tool.maintain_focus = False
 
     fig = gridplot(
         plots,
@@ -621,6 +650,7 @@ def plot_heatmaps(heatmap: pd.Series, agg: str, ncols: int,
         toolbar_location='above',
         merge_tools=True,
     )
+    
 
     show(fig, browser=None if open_browser else 'none')
     return fig
